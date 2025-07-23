@@ -29,6 +29,10 @@ class AppRouter {
           path: RouteName.productList,
           builder: (context, state) => const ProductListScreen(),
         ),
+        GoRoute(
+          path: RouteName.methodChannel,
+          builder: (context, state) => const DeviceInfoScreen(),
+        ),
       ],
       errorBuilder: (context, state) => const Scaffold(
         body: Center(
