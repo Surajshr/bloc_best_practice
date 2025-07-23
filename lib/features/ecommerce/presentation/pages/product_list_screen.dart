@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:varosha_app/core/imports/ui_imports.dart';
 import 'package:varosha_app/features/ecommerce/presentation/logic/product_list/product_list_bloc.dart';
 import 'package:varosha_app/features/ecommerce/presentation/widgets/product_card.dart';
 import 'package:varosha_app/features/ecommerce/presentation/widgets/search_filter_bar.dart';
+import 'package:varosha_app/route/route_imports.dart';
 import 'package:varosha_app/widgets/build_text.dart';
 
 class ProductListScreen extends StatefulWidget {
@@ -45,124 +47,136 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const BuildText(
-          text: 'Products',
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.go(RouteName.dashboard);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.go(RouteName.dashboard),
+          ),
+          title: const BuildText(
+            text: 'Products',
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      ),
-      body: BlocBuilder<ProductListBloc, ProductListState>(
-        builder: (context, state) {
-          if (state.isLoading && state.products.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
+        body: BlocBuilder<ProductListBloc, ProductListState>(
+          builder: (context, state) {
+            if (state.isLoading && state.products.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state.hasError && state.products.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  BuildText(
-                    text: state.errorMessage ?? 'Something went wrong',
-                    fontSize: 16,
-                    color: Colors.red,
-                  ),
-                  SizedBox(height: 16.h),
-                  ElevatedButton(
-                    onPressed: () {
-                      context
-                          .read<ProductListBloc>()
-                          .add(const ProductListEvent.refresh());
-                    },
-                    child: const BuildText(
-                      text: 'Retry',
-                      fontSize: 14,
-                      color: AppColors.kWhiteColor,
+            if (state.hasError && state.products.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    BuildText(
+                      text: state.errorMessage ?? 'Something went wrong',
+                      fontSize: 16,
+                      color: Colors.red,
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              context
-                  .read<ProductListBloc>()
-                  .add(const ProductListEvent.refresh());
-            },
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                // Search and Filter Bar
-                SliverToBoxAdapter(
-                  child: SearchFilterBar(
-                    selectedCategory: state.selectedCategory,
-                    categories: state.categories,
-                    onSearch: (query) {
-                      context
-                          .read<ProductListBloc>()
-                          .add(ProductListEvent.searchProducts(query));
-                    },
-                    onCategorySelected: (category) {
-                      context
-                          .read<ProductListBloc>()
-                          .add(ProductListEvent.filterByCategory(category));
-                    },
-                  ),
-                ),
-                // Products Grid
-                SliverPadding(
-                  padding: EdgeInsets.all(16.w),
-                  sliver: SliverGrid(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 16.h,
-                      crossAxisSpacing: 16.w,
-                      childAspectRatio: 0.70,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final product = state.products[index];
-                        return ProductCard(
-                          product: product,
-                          onFavoritePressed: () {
-                            context.read<ProductListBloc>().add(
-                                ProductListEvent.toggleFavorite(product.id));
-                          },
-                        );
+                    SizedBox(height: 16.h),
+                    ElevatedButton(
+                      onPressed: () {
+                        context
+                            .read<ProductListBloc>()
+                            .add(const ProductListEvent.refresh());
                       },
-                      childCount: state.products.length,
-                    ),
-                  ),
-                ),
-                // Loading Indicator
-                if (state.isLoading && state.products.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.w),
-                      child: const Center(child: CircularProgressIndicator()),
-                    ),
-                  ),
-                // End of List Indicator
-                if (state.hasReachedEnd && state.products.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(16.w),
                       child: const BuildText(
-                        text: 'No more products',
+                        text: 'Retry',
                         fontSize: 14,
-                        color: Colors.grey,
-                        textAlign: TextAlign.center,
+                        color: AppColors.kWhiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async {
+                context
+                    .read<ProductListBloc>()
+                    .add(const ProductListEvent.refresh());
+              },
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  // Search and Filter Bar
+                  SliverToBoxAdapter(
+                    child: SearchFilterBar(
+                      selectedCategory: state.selectedCategory,
+                      categories: state.categories,
+                      onSearch: (query) {
+                        context
+                            .read<ProductListBloc>()
+                            .add(ProductListEvent.searchProducts(query));
+                      },
+                      onCategorySelected: (category) {
+                        context
+                            .read<ProductListBloc>()
+                            .add(ProductListEvent.filterByCategory(category));
+                      },
+                    ),
+                  ),
+                  // Products Grid
+                  SliverPadding(
+                    padding: EdgeInsets.all(16.w),
+                    sliver: SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 16.h,
+                        crossAxisSpacing: 16.w,
+                        childAspectRatio: 0.70,
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final product = state.products[index];
+                          return ProductCard(
+                            product: product,
+                            onFavoritePressed: () {
+                              context.read<ProductListBloc>().add(
+                                  ProductListEvent.toggleFavorite(product.id));
+                            },
+                          );
+                        },
+                        childCount: state.products.length,
                       ),
                     ),
                   ),
-              ],
-            ),
-          );
-        },
+                  // Loading Indicator
+                  if (state.isLoading && state.products.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.w),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                  // End of List Indicator
+                  if (state.hasReachedEnd && state.products.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.w),
+                        child: const BuildText(
+                          text: 'No more products',
+                          fontSize: 14,
+                          color: Colors.grey,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

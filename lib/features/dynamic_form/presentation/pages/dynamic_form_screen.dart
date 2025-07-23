@@ -34,102 +34,114 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: BlocBuilder<DynamicFormBloc, DynamicFormState>(
-            builder: (context, state) {
-              if (state.formData == null) {
-                return const BuildText(
-                  text: 'Dynamic Form',
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.go(RouteName.dashboard);
+        }
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.go(RouteName.dashboard),
+            ),
+            title: BlocBuilder<DynamicFormBloc, DynamicFormState>(
+              builder: (context, state) {
+                if (state.formData == null) {
+                  return const BuildText(
+                    text: 'Dynamic Form',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  );
+                }
+                return BuildText(
+                  text: state.formData!.title,
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                 );
+              },
+            ),
+          ),
+          body: BlocConsumer<DynamicFormBloc, DynamicFormState>(
+            listener: (context, state) {
+              if (state.isSubmitted && state.isValid) {
+                submitDialogBox(context, state);
               }
-              return BuildText(
-                text: state.formData!.title,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+            },
+            builder: (context, state) {
+              if (state.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state.formData == null) {
+                return const Center(
+                  child: BuildText(
+                    text: 'No form data available',
+                    fontSize: 16,
+                    color: AppColors.kTextDisabledColor,
+                  ),
+                );
+              }
+
+              final currentStep = state.formData!.steps[state.currentStep];
+
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(16.w),
+                    child: StepProgressIndicator(
+                      totalSteps: state.formData!.steps.length,
+                      currentStep: state.currentStep,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        BuildText(
+                          text: currentStep.title,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.kTextColor,
+                        ),
+                        SizedBox(height: 8.h),
+                        BuildText(
+                          text: currentStep.description,
+                          fontSize: 16.sp,
+                          color: AppColors.kTextDisabledColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (state.currentStep == state.formData!.steps.length - 1)
+                    _buildReviewSection(context)
+                  else
+                    Expanded(
+                      child: ListView.separated(
+                        padding: EdgeInsets.all(16.w),
+                        itemCount: currentStep.inputs.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 16.h),
+                        itemBuilder: (context, index) {
+                          final input = currentStep.inputs[index];
+                          final formValues = state.formValues.toMap();
+                          return InputBuilder(
+                            input: input,
+                            value: formValues[input.key],
+                          );
+                        },
+                      ),
+                    ),
+                  _buildBottomButtons(context, state),
+                ],
               );
             },
           ),
-        ),
-        body: BlocConsumer<DynamicFormBloc, DynamicFormState>(
-          listener: (context, state) {
-            if (state.isSubmitted && state.isValid) {
-              submitDialogBox(context, state);
-            }
-          },
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (state.formData == null) {
-              return const Center(
-                child: BuildText(
-                  text: 'No form data available',
-                  fontSize: 16,
-                  color: AppColors.kTextDisabledColor,
-                ),
-              );
-            }
-
-            final currentStep = state.formData!.steps[state.currentStep];
-
-            return Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(16.w),
-                  child: StepProgressIndicator(
-                    totalSteps: state.formData!.steps.length,
-                    currentStep: state.currentStep,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      BuildText(
-                        text: currentStep.title,
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.kTextColor,
-                      ),
-                      SizedBox(height: 8.h),
-                      BuildText(
-                        text: currentStep.description,
-                        fontSize: 16.sp,
-                        color: AppColors.kTextDisabledColor,
-                      ),
-                    ],
-                  ),
-                ),
-                if (state.currentStep == state.formData!.steps.length - 1)
-                  _buildReviewSection(context)
-                else
-                  Expanded(
-                    child: ListView.separated(
-                      padding: EdgeInsets.all(16.w),
-                      itemCount: currentStep.inputs.length,
-                      separatorBuilder: (context, index) =>
-                          SizedBox(height: 16.h),
-                      itemBuilder: (context, index) {
-                        final input = currentStep.inputs[index];
-                        final formValues = state.formValues.toMap();
-                        return InputBuilder(
-                          input: input,
-                          value: formValues[input.key],
-                        );
-                      },
-                    ),
-                  ),
-                _buildBottomButtons(context, state),
-              ],
-            );
-          },
         ),
       ),
     );
