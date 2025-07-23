@@ -1,0 +1,30 @@
+{
+    "appName": "Varosha App",
+    "@appName": {
+        "description": "The name of the application"
+    },
+    "addTodo": "Add Todo",
+    "@addTodo": {
+        "description": "Text for add todo button"
+    },
+    "todoTitle": "Todo Title",
+    "@todoTitle": {
+        "description": "Label for todo title input"
+    },
+    "todoDescription": "Description",
+    "@todoDescription": {
+        "description": "Label for todo description input"
+    },
+    "save": "Save",
+    "@save": {
+        "description": "Text for save button"
+    },
+    "cancel": "Cancel",
+    "@cancel": {
+        "description": "Text for cancel button"
+    },
+    "noTodos": "No todos yet",
+    "@noTodos": {
+        "description": "Text shown when there are no todos"
+    }
+} 
