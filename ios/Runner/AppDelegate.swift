@@ -4,6 +4,8 @@ import Foundation
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
+  private var isMethodChannelSetup = false
+  
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -18,6 +20,9 @@ import Foundation
   }
   
   private func setupMethodChannels() {
+    // Prevent duplicate setup
+    guard !isMethodChannelSetup else { return }
+    
     guard let controller = window?.rootViewController as? FlutterViewController else {
       return
     }
@@ -36,24 +41,38 @@ import Foundation
       }
     })
     
-    // Register PlatformView
+    // Register PlatformView only once
     let registrar = self.registrar(forPlugin: "NativeButtonViewPlugin")
     let factory = NativeButtonViewFactory(messenger: registrar!.messenger())
     registrar!.register(factory, withId: "native_button_view")
+    
+    isMethodChannelSetup = true
   }
   
   private func getDeviceInfo() -> [String: Any] {
+    // Enable battery monitoring
     UIDevice.current.isBatteryMonitoringEnabled = true
-    let batteryLevel = Int(UIDevice.current.batteryLevel * 100)
-    let isCharging = UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full
-    let deviceModel = UIDevice.current.model
-    let systemTime = ISO8601DateFormatter().string(from: Date())
-    
+
+    let batteryLevel = UIDevice.current.batteryLevel  // Float (-1.0 if unavailable)
+    let batteryPercentage = batteryLevel >= 0 ? Int(batteryLevel * 100) : -1
+
+    let isCharging: Bool = {
+        switch UIDevice.current.batteryState {
+        case .charging, .full:
+            return true
+        default:
+            return false
+        }
+    }()
+
+    let deviceModel = UIDevice.current.model  // For example, "iPhone"
+    let systemTime = ISO8601DateFormatter().string(from: Date())  // UTC time in ISO 8601 format
+
     return [
-      "batteryLevel": batteryLevel,
-      "deviceModel": deviceModel,
-      "isCharging": isCharging,
-      "systemTime": systemTime
+        "batteryLevel": batteryPercentage,
+        "deviceModel": deviceModel,
+        "isCharging": isCharging,
+        "systemTime": systemTime
     ]
   }
 }
