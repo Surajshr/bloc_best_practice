@@ -9,4 +9,5 @@ class RouteName {
   static const String methodChannel = '/method-channel';
   static const String persistentNavigation = '/persistent-navigation';
   static const String formSubmissionDetails = '/form-submission-details';
+  static const String productList = '/product-list';
 }

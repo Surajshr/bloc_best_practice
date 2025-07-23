@@ -25,6 +25,10 @@ class AppRouter {
             return FormSubmissionDetailsScreen(submission: submission);
           },
         ),
+        GoRoute(
+          path: RouteName.productList,
+          builder: (context, state) => const ProductListScreen(),
+        ),
       ],
       errorBuilder: (context, state) => const Scaffold(
         body: Center(

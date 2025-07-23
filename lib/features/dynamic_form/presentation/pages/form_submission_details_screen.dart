@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:varosha_app/core/imports/ui_imports.dart';
 import 'package:varosha_app/features/dynamic_form/data/model/form_submission_model.dart';
+import 'package:varosha_app/widgets/build_text.dart';
 
 class FormSubmissionDetailsScreen extends StatelessWidget {
   final FormSubmissionModel submission;
@@ -14,20 +15,22 @@ class FormSubmissionDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Submission Details'),
+        title: const BuildText(
+          text: 'Submission Details',
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              submission.formData.title,
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-                color: AppColors.kTextColor,
-              ),
+            BuildText(
+              text: submission.formData.title,
+              fontSize: 24.sp,
+              fontWeight: FontWeight.bold,
+              color: AppColors.kTextColor,
             ),
             SizedBox(height: 24.h),
             ...submission.formData.steps.expand((step) {
@@ -35,21 +38,17 @@ class FormSubmissionDetailsScreen extends StatelessWidget {
               if (step.inputs.isEmpty) return [];
 
               return [
-                Text(
-                  step.title,
-                  style: TextStyle(
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.kTextColor,
-                  ),
+                BuildText(
+                  text: step.title,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.kTextColor,
                 ),
                 SizedBox(height: 8.h),
-                Text(
-                  step.description,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.kTextDisabledColor,
-                  ),
+                BuildText(
+                  text: step.description,
+                  fontSize: 14.sp,
+                  color: AppColors.kTextDisabledColor,
                 ),
                 SizedBox(height: 16.h),
                 ...step.inputs.map((input) {
@@ -76,21 +75,17 @@ class FormSubmissionDetailsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          input.label,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: AppColors.kTextDisabledColor,
-                          ),
+                        BuildText(
+                          text: input.label,
+                          fontSize: 14.sp,
+                          color: AppColors.kTextDisabledColor,
                         ),
                         SizedBox(height: 8.h),
-                        Text(
-                          value.toString(),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.kTextColor,
-                          ),
+                        BuildText(
+                          text: value.toString(),
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.kTextColor,
                         ),
                       ],
                     ),

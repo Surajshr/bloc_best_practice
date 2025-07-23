@@ -4,6 +4,7 @@ import 'package:varosha_app/core/imports/ui_imports.dart';
 import 'package:varosha_app/features/dynamic_form/data/model/dynamic_form_model.dart';
 import 'package:varosha_app/features/dynamic_form/presentation/logic/dynamic_form_bloc.dart';
 import 'package:varosha_app/widgets/app_text_field.dart';
+import 'package:varosha_app/widgets/build_text.dart';
 
 class InputBuilder extends StatefulWidget {
   final FormInput input;
@@ -97,16 +98,13 @@ class _InputBuilderState extends State<InputBuilder> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.input.label,
-          style: TextStyle(
-            fontFamily: AppConstants.kFontFamily,
-            color: AppColors.kTextDisabledColor,
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w500,
-            height: 16.sp / 12.sp,
-            letterSpacing: 0.6,
-          ),
+        BuildText(
+          text: widget.input.label,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.w500,
+          color: AppColors.kTextDisabledColor,
+          height: 16.sp / 12.sp,
+          letterSpacing: 0.6,
         ),
         SizedBox(height: 8.h),
         Container(
@@ -127,30 +125,24 @@ class _InputBuilderState extends State<InputBuilder> {
             value: widget.value as String?,
             isExpanded: true,
             underline: const SizedBox(),
-            hint: Text(
-              widget.input.label,
-              style: TextStyle(
-                fontFamily: AppConstants.kFontFamily,
-                color: AppColors.kTextDisabledColor,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                height: 16.sp / 12.sp,
-                letterSpacing: 0.6,
-              ),
+            hint: BuildText(
+              text: widget.input.label,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.kTextDisabledColor,
+              height: 16.sp / 12.sp,
+              letterSpacing: 0.6,
             ),
             items: options.map((option) {
               return DropdownMenuItem(
                 value: option,
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    fontFamily: AppConstants.kFontFamily,
-                    color: AppColors.kTextColor,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    height: 16.sp / 12.sp,
-                    letterSpacing: 0.6,
-                  ),
+                child: BuildText(
+                  text: option,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.kTextColor,
+                  height: 16.sp / 12.sp,
+                  letterSpacing: 0.6,
                 ),
               );
             }).toList(),
@@ -168,13 +160,11 @@ class _InputBuilderState extends State<InputBuilder> {
     return Row(
       children: [
         Expanded(
-          child: Text(
-            widget.input.label,
-            style: TextStyle(
-              color: AppColors.kTextColor,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w400,
-            ),
+          child: BuildText(
+            text: widget.input.label,
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w400,
+            color: AppColors.kTextColor,
           ),
         ),
         Switch(

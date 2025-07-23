@@ -11,6 +11,7 @@ import 'package:varosha_app/features/dynamic_form/presentation/widgets/input_bui
 import 'package:varosha_app/features/dynamic_form/presentation/widgets/step_progress_indicator.dart';
 import 'package:varosha_app/route/route_imports.dart';
 import 'package:varosha_app/widgets/app_button.dart';
+import 'package:varosha_app/widgets/build_text.dart';
 import 'package:varosha_app/widgets/custom_dialogbox.dart';
 
 class DynamicFormScreen extends StatefulWidget {
@@ -33,23 +34,24 @@ class _DynamicFormScreenState extends State<DynamicFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const DynamicFormView();
-  }
-}
-
-class DynamicFormView extends StatelessWidget {
-  const DynamicFormView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
           title: BlocBuilder<DynamicFormBloc, DynamicFormState>(
             builder: (context, state) {
-              if (state.formData == null) return const Text('Dynamic Form');
-              return Text(state.formData!.title);
+              if (state.formData == null) {
+                return const BuildText(
+                  text: 'Dynamic Form',
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                );
+              }
+              return BuildText(
+                text: state.formData!.title,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              );
             },
           ),
         ),
@@ -65,7 +67,13 @@ class DynamicFormView extends StatelessWidget {
             }
 
             if (state.formData == null) {
-              return const Center(child: Text('No form data available'));
+              return const Center(
+                child: BuildText(
+                  text: 'No form data available',
+                  fontSize: 16,
+                  color: AppColors.kTextDisabledColor,
+                ),
+              );
             }
 
             final currentStep = state.formData!.steps[state.currentStep];
@@ -84,21 +92,17 @@ class DynamicFormView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        currentStep.title,
-                        style: TextStyle(
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.kTextColor,
-                        ),
+                      BuildText(
+                        text: currentStep.title,
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.kTextColor,
                       ),
                       SizedBox(height: 8.h),
-                      Text(
-                        currentStep.description,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: AppColors.kTextDisabledColor,
-                        ),
+                      BuildText(
+                        text: currentStep.description,
+                        fontSize: 16.sp,
+                        color: AppColors.kTextDisabledColor,
                       ),
                     ],
                   ),
@@ -162,52 +166,27 @@ class DynamicFormView extends StatelessWidget {
       child: BlocBuilder<DynamicFormBloc, DynamicFormState>(
         builder: (context, state) {
           final formValues = state.formValues;
-          print('FormValues onReviewSection: $formValues');
           return SingleChildScrollView(
             padding: EdgeInsets.all(16.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // if (!state.isValid)
-                //   Padding(
-                //     padding: EdgeInsets.only(bottom: 16.h),
-                //     child: Container(
-                //       padding: EdgeInsets.all(16.w),
-                //       decoration: BoxDecoration(
-                //         color: Colors.red.shade50,
-                //         borderRadius: BorderRadius.circular(8.r),
-                //         border: Border.all(color: Colors.red),
-                //       ),
-                //       child: Text(
-                //         'Please fill in all required fields before submitting.',
-                //         style: TextStyle(
-                //           color: Colors.red,
-                //           fontSize: 14.sp,
-                //           fontWeight: FontWeight.w500,
-                //         ),
-                //       ),
-                //     ),
-                //   ),
                 ...state.formData!.steps.expand((step) {
                   // Skip empty steps
                   if (step.inputs.isEmpty) return [];
 
                   return [
-                    Text(
-                      step.title,
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.kTextColor,
-                      ),
+                    BuildText(
+                      text: step.title,
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.kTextColor,
                     ),
                     SizedBox(height: 8.h),
-                    Text(
-                      step.description,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: AppColors.kTextDisabledColor,
-                      ),
+                    BuildText(
+                      text: step.description,
+                      fontSize: 14.sp,
+                      color: AppColors.kTextDisabledColor,
                     ),
                     SizedBox(height: 16.h),
                     ...step.inputs.map((input) {
@@ -261,21 +240,17 @@ class DynamicFormView extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              input.label,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: AppColors.kTextDisabledColor,
-                              ),
+                            BuildText(
+                              text: input.label,
+                              fontSize: 14.sp,
+                              color: AppColors.kTextDisabledColor,
                             ),
                             SizedBox(height: 8.h),
-                            Text(
-                              value.toString(),
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.kTextColor,
-                              ),
+                            BuildText(
+                              text: value.toString(),
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.kTextColor,
                             ),
                           ],
                         ),

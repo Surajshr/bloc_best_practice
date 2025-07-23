@@ -9,6 +9,7 @@ import 'package:varosha_app/core/imports/ui_imports.dart';
 import 'package:varosha_app/core/theme/app_theme.dart';
 import 'package:varosha_app/features/dynamic_form/data/model/dynamic_form_model.dart';
 import 'package:varosha_app/features/dynamic_form/presentation/logic/dynamic_form_bloc.dart';
+import 'package:varosha_app/features/ecommerce/presentation/logic/product_list/product_list_bloc.dart';
 import 'package:varosha_app/features/todo/presentation/logic/todo_bloc.dart';
 import 'package:varosha_app/features/todo/presentation/logic/todo_event.dart';
 import 'package:varosha_app/route/route_imports.dart';
@@ -34,6 +35,9 @@ class App extends StatelessWidget {
               ),
               BlocProvider(
                 create: (context) => DynamicFormBloc(),
+              ),
+              BlocProvider(
+                create: (context) => ProductListBloc(),
               ),
             ],
             child: ScreenUtilInit(
