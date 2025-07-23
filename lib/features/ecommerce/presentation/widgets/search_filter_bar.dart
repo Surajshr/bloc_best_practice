@@ -62,6 +62,7 @@ class SearchFilterBar extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             itemCount: categories.length + 1, // +1 for "All" option
             itemBuilder: (context, index) {
+              print('All categories ${categories}');
               // "All" category
               if (index == 0) {
                 final isSelected = selectedCategory == null;

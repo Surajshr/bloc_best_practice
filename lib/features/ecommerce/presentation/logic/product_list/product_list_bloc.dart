@@ -42,6 +42,13 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
           products: products,
           isLoading: false,
           currentPage: 1,
+          categories: products
+              .map((product) => product.categories)
+              .toList()
+              .expand((x) => x)
+              .toList()
+              .toSet()
+              .toList(),
           hasReachedEnd: products.length < _pageSize,
         ),
       );
@@ -135,21 +142,56 @@ class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
 
   Future<void> _onSearchProducts(
       _SearchProducts event, Emitter<ProductListState> emit) async {
-    emit(state.copyWith(
-      searchQuery: event.query,
-      currentPage: 1,
-      hasReachedEnd: false,
-    ));
-    add(const ProductListEvent.loadInitial());
+    try {
+      final products = await _getProducts(
+        GetProductsParams(
+          page: 1,
+          limit: _pageSize,
+          searchQuery: event.query,
+          category: state.selectedCategory,
+        ),
+      );
+
+      emit(state.copyWith(
+        products: products,
+        isLoading: false,
+        currentPage: 1,
+        hasReachedEnd: products.length < _pageSize,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      ));
+    }
   }
 
   Future<void> _onFilterByCategory(
       _FilterByCategory event, Emitter<ProductListState> emit) async {
-    emit(state.copyWith(
-      selectedCategory: event.category,
-      currentPage: 1,
-      hasReachedEnd: false,
-    ));
-    add(const ProductListEvent.loadInitial());
+    try {
+      final products = await _getProducts(
+        GetProductsParams(
+          page: 1,
+          limit: _pageSize,
+          searchQuery: state.searchQuery,
+          category: event.category,
+        ),
+      );
+
+      emit(state.copyWith(
+        products: products,
+        isLoading: false,
+        currentPage: 1,
+        hasReachedEnd: products.length < _pageSize,
+        selectedCategory: event.category,
+      ));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      ));
+    }
   }
 }
