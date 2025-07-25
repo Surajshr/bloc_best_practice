@@ -1,4 +1,3 @@
-# Varosha App
 
 A Flutter application showcasing various implementation patterns and features.
 
