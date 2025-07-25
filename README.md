@@ -1,4 +1,3 @@
-# Varosha App
 
 A Flutter application showcasing various implementation patterns and features with clean architecture.
 
@@ -87,7 +86,7 @@ lib/
 1. Clone the repository:
 ```bash
 git clone [repository-url]
-cd varosha_app
+cd {app}
 ```
 
 2. Install dependencies:
